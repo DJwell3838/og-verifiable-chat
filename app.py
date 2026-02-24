@@ -20,49 +20,50 @@ st.set_page_config(
     page_icon="💬",
 )
 
-# --- OG-style theming via CSS ---
-OG_PRIMARY = "#f6cf57"  # yellow accent close to their brand
-OG_BG = "#050816"       # deep dark background
-OG_PANEL = "#0b1020"    # sidebar / panel background
+# --- Softer OG-style theming via CSS ---
+OG_PRIMARY = "#facc15"   # softer yellow
+OG_PRIMARY_HOVER = "#fde047"
+OG_BG = "#020617"        # very dark blue/navy
+OG_PANEL = "#030712"     # slightly lighter panel
 
 st.markdown(
     f"""
     <style>
     .stApp {{
         background-color: {OG_BG};
-        color: #ffffff;
+        color: #e5e7eb;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
     }}
 
     [data-testid="stSidebar"] {{
         background-color: {OG_PANEL};
-        border-right: 1px solid rgba(255,255,255,0.08);
+        border-right: 1px solid rgba(148,163,184,0.25);
     }}
 
-    /* Titles and subtitles */
     h1, h2, h3, h4 {{
-        color: #ffffff;
+        color: #f9fafb;
     }}
 
     /* Primary buttons */
     .stButton > button {{
         background-color: {OG_PRIMARY};
-        color: #000000;
+        color: #111827;
         border-radius: 999px;
         border: none;
-        padding: 0.5rem 1.5rem;
+        padding: 0.55rem 1.4rem;
         font-weight: 600;
-        box-shadow: 0 0 12px rgba(246,207,87,0.35);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
     }}
     .stButton > button:hover {{
-        background-color: #ffd96c;
-        box-shadow: 0 0 20px rgba(246,207,87,0.55);
+        background-color: {OG_PRIMARY_HOVER};
+        box-shadow: 0 6px 14px rgba(0,0,0,0.45);
     }}
 
     /* Text areas and inputs */
     textarea, .stTextInput input {{
-        background-color: #0f172a !important;
-        color: #ffffff !important;
-        border-radius: 0.6rem !important;
+        background-color: #020617 !important;
+        color: #e5e7eb !important;
+        border-radius: 0.75rem !important;
         border: 1px solid rgba(148,163,184,0.6) !important;
     }}
     textarea:focus, .stTextInput input:focus {{
@@ -72,9 +73,9 @@ st.markdown(
 
     /* Select boxes */
     .stSelectbox > div > div {{
-        background-color: #0f172a !important;
-        color: #ffffff !important;
-        border-radius: 0.6rem !important;
+        background-color: #020617 !important;
+        color: #e5e7eb !important;
+        border-radius: 0.75rem !important;
         border: 1px solid rgba(148,163,184,0.6) !important;
     }}
 
@@ -82,7 +83,7 @@ st.markdown(
     .social-footer {{
         margin-top: 2rem;
         padding-top: 1rem;
-        border-top: 1px solid rgba(148,163,184,0.4);
+        border-top: 1px solid rgba(55,65,81,0.8);
         text-align: center;
         font-size: 0.9rem;
         color: #9ca3af;
@@ -142,15 +143,14 @@ with st.sidebar:
         feedback_text = st.text_area(
             "Your message",
             key="feedback_message",
-            height=100,
-            placeholder="Ran into an error or have an idea? Leave it here.",
+            height=90,
+            placeholder="Hit an error or have an idea? Leave it here.",
         )
         if st.button("Send", key="send_feedback"):
             if feedback_text.strip():
                 st.success("Thanks! Your message has been sent.")
             else:
                 st.warning("Please enter a message before sending.")
-
 
 st.subheader("Prompt")
 prompt = st.text_area(
@@ -179,7 +179,17 @@ if st.button("Run verifiable inference on OpenGradient", type="primary", key="ru
                         x402_settlement_mode=settlement_mode,
                     )
                 except Exception as e:
-                    st.error(f"Error while calling OpenGradient: {e}")
+                    msg = str(e)
+                    # Более дружелюбное сообщение для платёжных/фосетных проблем
+                    if "Payment Required" in msg or "payment" in msg:
+                        st.error(
+                            "OpenGradient payment error: the testnet payment gateway "
+                            "returned an invalid response. This is usually a temporary "
+                            "issue on the network side or a faucet limit. "
+                            "Please try again in a bit or verify your OPG balance on Base Sepolia."
+                        )
+                    else:
+                        st.error(f"Error while calling OpenGradient: {e}")
                 else:
                     response_text = None
                     try:
