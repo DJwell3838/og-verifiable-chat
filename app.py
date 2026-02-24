@@ -95,12 +95,14 @@ if st.button("Run verifiable inference on OpenGradient", type="primary"):
                         st.json(getattr(completion, "__dict__", str(completion)))
 
                     st.subheader("On-chain verification")
-                    tx_hash = getattr(completion, "transaction_hash", None)
-                    if tx_hash:
-                        st.write("Transaction hash (Base Sepolia):")
-                        st.code(tx_hash, language="text")
-                    else:
-                        st.write("`transaction_hash` field not found in the response.")
+tx_hash = getattr(completion, "transaction_hash", None)
+if tx_hash and tx_hash != "external":
+    st.write("Transaction hash (Base Sepolia):")
+    st.code(tx_hash, language="text")
+elif tx_hash == "external":
+    st.write("On-chain transaction hash is managed externally for this request.")
+else:
+    st.write("`transaction_hash` field not found in the response.")
 
                     with st.expander("Raw response data (for OpenGradient reviewer)"):
                         st.json(
