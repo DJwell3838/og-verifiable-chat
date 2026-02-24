@@ -70,6 +70,9 @@ if st.button("Run verifiable inference on OpenGradient", type="primary"):
         else:
             with st.spinner("Running verifiable inference on the OpenGradient network..."):
                 try:
+                    # Ensure there is enough OPG allowance for x402 payments
+                    client.llm.ensure_opg_approval(opg_amount=5)
+
                     completion = client.llm.chat(
                         model=model,
                         messages=[{"role": "user", "content": prompt}],
