@@ -166,6 +166,7 @@ if st.button("Run verifiable inference on OpenGradient", type="primary", key="ru
         try:
             client = get_client()
         except Exception as e:
+            # Конфиг сломан – это уже не “перезапусти”, пусть будет честная ошибка
             st.error(f"Failed to initialize OpenGradient client: {e}")
         else:
             with st.spinner("Running verifiable inference on the OpenGradient network..."):
@@ -178,18 +179,12 @@ if st.button("Run verifiable inference on OpenGradient", type="primary", key="ru
                         messages=[{"role": "user", "content": prompt}],
                         x402_settlement_mode=settlement_mode,
                     )
-                except Exception as e:
-                    msg = str(e)
-                    # Более дружелюбное сообщение для платёжных/фосетных проблем
-                    if "Payment Required" in msg or "payment" in msg:
-                        st.error(
-                            "OpenGradient payment error: the testnet payment gateway "
-                            "returned an invalid response. This is usually a temporary "
-                            "issue on the network side or a faucet limit. "
-                            "Please try again in a bit or verify your OPG balance on Base Sepolia."
-                        )
-                    else:
-                        st.error(f"Error while calling OpenGradient: {e}")
+                except Exception:
+                    # Любая сетевая/платёжная ошибка скрывается за дружелюбным сообщением
+                    st.warning(
+                        "It looks like something went wrong on the network side. "
+                        "Please try sending your request again."
+                    )
                 else:
                     response_text = None
                     try:
