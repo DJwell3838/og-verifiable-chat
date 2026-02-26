@@ -15,7 +15,7 @@ def get_client() -> og.Client:
 
 
 st.set_page_config(
-    page_title="OpenGradient Verifiable Chat",
+    page_title="OGChat",
     page_icon="💬",
     layout="wide",
 )
@@ -24,7 +24,6 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Base: deep dark like opengradient.ai */
     .stApp {
         background: linear-gradient(180deg, #080c14 0%, #0a0e1a 50%, #060810 100%);
         color: #e2e8f0;
@@ -34,13 +33,9 @@ st.markdown(
         border-right: 1px solid rgba(148, 163, 184, 0.12);
     }
     [data-testid="stSidebar"] .stMarkdown { color: #94a3b8; }
-
-    /* Typography */
     h1, h2, h3 { color: #f8fafc; font-weight: 600; }
     h1 { font-size: 1.85rem; letter-spacing: -0.02em; }
     p, .stMarkdown { color: #cbd5e1; }
-
-    /* Chat input: prominent, OG-style */
     [data-testid="stChatInput"] {
         background: rgba(15, 23, 42, 0.9) !important;
         border: 1px solid rgba(251, 191, 36, 0.35) !important;
@@ -51,8 +46,6 @@ st.markdown(
         border-color: rgba(251, 191, 36, 0.7) !important;
         box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.15) !important;
     }
-
-    /* Buttons: warm gold accent */
     .stButton > button {
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
         color: #0f172a !important;
@@ -65,8 +58,6 @@ st.markdown(
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35) !important;
     }
-
-    /* Cards / response area */
     .og-card {
         background: rgba(15, 23, 42, 0.6);
         border: 1px solid rgba(148, 163, 184, 0.15);
@@ -74,17 +65,12 @@ st.markdown(
         padding: 1.25rem;
         margin: 0.5rem 0;
     }
-    .og-accent { color: #fbbf24; }
-
-    /* Selectboxes */
     .stSelectbox > div > div {
         background: rgba(15, 23, 42, 0.9) !important;
         color: #e2e8f0 !important;
         border: 1px solid rgba(148, 163, 184, 0.25) !important;
         border-radius: 0.75rem !important;
     }
-
-    /* Footer */
     .social-footer {
         margin-top: 2.5rem;
         padding-top: 1rem;
@@ -105,12 +91,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Header ---
-st.title("OpenGradient Verifiable Chat")
-st.markdown(
-    "Run **verifiable LLM chat** on the OpenGradient network. "
-    "Your request is executed via the Python SDK; the response can be verified on-chain."
-)
+# --- Header: logo + OGChat ---
+logo_col, title_col = st.columns([0.12, 0.88])
+with logo_col:
+    try:
+        st.image("logo.png", width=72)
+    except FileNotFoundError:
+        st.image("https://raw.githubusercontent.com/DJwell3838/og-verifiable-chat/main/logo.png", width=72)
+with title_col:
+    st.title("OGChat")
+    st.caption("Verifiable LLM chat on the OpenGradient network")
+st.markdown("Your request runs via the OpenGradient Python SDK; the response can be verified on-chain.")
 st.markdown("---")
 
 # --- Sidebar ---
@@ -140,14 +131,10 @@ with st.sidebar:
         if st.button("Send", key="send_feedback"):
             st.success("Thanks! Your message has been sent.") if fb.strip() else st.warning("Enter a message first.")
 
-# --- Chat input: Enter sends natively ---
+# --- Chat input: Enter sends ---
 prompt = st.chat_input("Enter your prompt and press Enter to send")
 
 if prompt and prompt.strip():
-    if "last_prompt" not in st.session_state:
-        st.session_state.last_prompt = None
-    st.session_state.last_prompt = prompt.strip()
-
     try:
         client = get_client()
     except Exception as e:
@@ -195,7 +182,7 @@ if prompt and prompt.strip():
 st.markdown(
     """
     <div class="social-footer">
-      OpenGradient · 
+      OpenGradient ·
       <a href="https://x.com/OpenGradient" target="_blank" rel="noopener">X</a> ·
       <a href="https://discord.gg/2t5sx5BCpB" target="_blank" rel="noopener">Discord</a> ·
       <a href="https://www.opengradient.ai/" target="_blank" rel="noopener">Website</a> ·
