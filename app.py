@@ -20,7 +20,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- OG site–style: dark, warm gold accent, clean ---
 st.markdown(
     """
     <style>
@@ -91,20 +90,22 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Header: logo + OGChat ---
+# --- Header: logo + OGChat (no crash if logo missing) ---
 logo_col, title_col = st.columns([0.12, 0.88])
 with logo_col:
     try:
         st.image("logo.png", width=72)
-    except FileNotFoundError:
-        st.image("https://raw.githubusercontent.com/DJwell3838/og-verifiable-chat/main/logo.png", width=72)
+    except Exception:
+        try:
+            st.image("https://raw.githubusercontent.com/DJwell3838/og-verifiable-chat/main/logo.png", width=72)
+        except Exception:
+            pass
 with title_col:
     st.title("OGChat")
     st.caption("Verifiable LLM chat on the OpenGradient network")
 st.markdown("Your request runs via the OpenGradient Python SDK; the response can be verified on-chain.")
 st.markdown("---")
 
-# --- Sidebar ---
 with st.sidebar:
     st.header("Settings")
     model = st.selectbox(
@@ -131,7 +132,6 @@ with st.sidebar:
         if st.button("Send", key="send_feedback"):
             st.success("Thanks! Your message has been sent.") if fb.strip() else st.warning("Enter a message first.")
 
-# --- Chat input: Enter sends ---
 prompt = st.chat_input("Enter your prompt and press Enter to send")
 
 if prompt and prompt.strip():
@@ -178,7 +178,6 @@ if prompt and prompt.strip():
                     st.json({"transaction_hash": tx_hash, "raw": getattr(completion, "__dict__", str(completion))})
                 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Footer ---
 st.markdown(
     """
     <div class="social-footer">
