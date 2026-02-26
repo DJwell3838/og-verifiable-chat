@@ -20,66 +20,85 @@ st.set_page_config(
     layout="wide",
 )
 
+# --- No white stripes, pastel palette, big logo ---
 st.markdown(
     """
     <style>
-    .stApp {
-        background: linear-gradient(180deg, #080c14 0%, #0a0e1a 50%, #060810 100%);
-        color: #e2e8f0;
+    /* Remove white bars: full-bleed dark background */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background: #1a1f2e !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
-    [data-testid="stSidebar"] {
-        background: rgba(10, 14, 26, 0.95);
-        border-right: 1px solid rgba(148, 163, 184, 0.12);
+    .stApp {
+        background: linear-gradient(180deg, #1e2433 0%, #1a1f2e 50%, #161b26 100%) !important;
+        color: #e2e8f0;
+        min-height: 100vh;
+    }
+    [data-testid="stToolbar"], [data-testid="stDecoration"] {
+        background: transparent !important;
+    }
+    section[data-testid="stSidebar"] {
+        background: rgba(30, 36, 51, 0.98) !important;
+        border-right: 1px solid rgba(148, 163, 184, 0.15);
     }
     [data-testid="stSidebar"] .stMarkdown { color: #94a3b8; }
-    h1, h2, h3 { color: #f8fafc; font-weight: 600; }
+
+    /* Soft pastel typography */
+    h1, h2, h3 { color: #f1f5f9; font-weight: 600; }
     h1 { font-size: 1.85rem; letter-spacing: -0.02em; }
     p, .stMarkdown { color: #cbd5e1; }
+
+    /* Pastel chat input */
     [data-testid="stChatInput"] {
-        background: rgba(15, 23, 42, 0.9) !important;
-        border: 1px solid rgba(251, 191, 36, 0.35) !important;
+        background: rgba(30, 41, 59, 0.85) !important;
+        border: 1px solid rgba(148, 163, 184, 0.3) !important;
         border-radius: 1rem !important;
         padding: 0.75rem 1rem !important;
     }
     [data-testid="stChatInput"]:focus-within {
-        border-color: rgba(251, 191, 36, 0.7) !important;
-        box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.15) !important;
+        border-color: rgba(251, 207, 232, 0.5) !important;
+        box-shadow: 0 0 0 2px rgba(251, 207, 232, 0.15) !important;
     }
+
+    /* Pastel buttons */
     .stButton > button {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-        color: #0f172a !important;
+        background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;
+        color: #1e1b4b !important;
         border: none !important;
         border-radius: 0.75rem !important;
         padding: 0.5rem 1.25rem !important;
         font-weight: 600 !important;
     }
     .stButton > button:hover {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35) !important;
+        background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%) !important;
+        box-shadow: 0 4px 20px rgba(167, 139, 250, 0.35) !important;
     }
+
     .og-card {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(148, 163, 184, 0.15);
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(148, 163, 184, 0.2);
         border-radius: 1rem;
         padding: 1.25rem;
         margin: 0.5rem 0;
     }
     .stSelectbox > div > div {
-        background: rgba(15, 23, 42, 0.9) !important;
+        background: rgba(30, 41, 59, 0.9) !important;
         color: #e2e8f0 !important;
         border: 1px solid rgba(148, 163, 184, 0.25) !important;
         border-radius: 0.75rem !important;
     }
+
     .social-footer {
         margin-top: 2.5rem;
         padding-top: 1rem;
-        border-top: 1px solid rgba(51, 65, 85, 0.6);
+        border-top: 1px solid rgba(71, 85, 105, 0.5);
         text-align: center;
         font-size: 0.875rem;
-        color: #64748b;
+        color: #94a3b8;
     }
     .social-footer a {
-        color: #fbbf24;
+        color: #c4b5fd;
         text-decoration: none;
         margin: 0 0.35rem;
         font-weight: 500;
@@ -90,14 +109,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Header: logo + OGChat (no crash if logo missing) ---
-logo_col, title_col = st.columns([0.12, 0.88])
+# --- Header: logo x5 (360px) + OGChat ---
+logo_col, title_col = st.columns([0.2, 0.8])
 with logo_col:
     try:
-        st.image("logo.png", width=72)
+        st.image("logo.png", width=360)
     except Exception:
         try:
-            st.image("https://raw.githubusercontent.com/DJwell3838/og-verifiable-chat/main/logo.png", width=72)
+            st.image("https://raw.githubusercontent.com/DJwell3838/og-verifiable-chat/main/logo.png", width=360)
         except Exception:
             pass
 with title_col:
