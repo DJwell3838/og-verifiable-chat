@@ -14,95 +14,48 @@ def get_client() -> og.Client:
     return og.Client(private_key=private_key)
 
 
-# --- Basic page config ---
 st.set_page_config(
     page_title="OpenGradient Verifiable Chat",
     page_icon="💬",
 )
 
-# --- Softer OG-style theming via CSS ---
-OG_PRIMARY = "#facc15"   # softer yellow
+OG_PRIMARY = "#facc15"
 OG_PRIMARY_HOVER = "#fde047"
-OG_BG = "#020617"        # very dark blue/navy
-OG_PANEL = "#030712"     # slightly lighter panel
+OG_BG = "#020617"
+OG_PANEL = "#030712"
 
 st.markdown(
     f"""
     <style>
-    .stApp {{
-        background-color: {OG_BG};
-        color: #e5e7eb;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    }}
-
-    [data-testid="stSidebar"] {{
-        background-color: {OG_PANEL};
-        border-right: 1px solid rgba(148,163,184,0.25);
-    }}
-
-    h1, h2, h3, h4 {{
-        color: #f9fafb;
-    }}
-
-    /* Primary buttons */
+    .stApp {{ background-color: {OG_BG}; color: #e5e7eb; font-family: system-ui, sans-serif; }}
+    [data-testid="stSidebar"] {{ background-color: {OG_PANEL}; border-right: 1px solid rgba(148,163,184,0.25); }}
+    h1, h2, h3, h4 {{ color: #f9fafb; }}
     .stButton > button {{
-        background-color: {OG_PRIMARY};
-        color: #111827;
-        border-radius: 999px;
-        border: none;
-        padding: 0.55rem 1.4rem;
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+        background-color: {OG_PRIMARY}; color: #111827; border-radius: 999px; border: none;
+        padding: 0.55rem 1.4rem; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.35);
     }}
-    .stButton > button:hover {{
-        background-color: {OG_PRIMARY_HOVER};
-        box-shadow: 0 6px 14px rgba(0,0,0,0.45);
-    }}
-
-    /* Text areas and inputs */
+    .stButton > button:hover {{ background-color: {OG_PRIMARY_HOVER}; box-shadow: 0 6px 14px rgba(0,0,0,0.45); }}
     textarea, .stTextInput input {{
-        background-color: #020617 !important;
-        color: #e5e7eb !important;
-        border-radius: 0.75rem !important;
-        border: 1px solid rgba(148,163,184,0.6) !important;
+        background-color: #020617 !important; color: #e5e7eb !important;
+        border-radius: 0.75rem !important; border: 1px solid rgba(148,163,184,0.6) !important;
     }}
-    textarea:focus, .stTextInput input:focus {{
-        border-color: {OG_PRIMARY} !important;
-        box-shadow: 0 0 0 1px {OG_PRIMARY}55 !important;
-    }}
-
-    /* Select boxes */
+    textarea:focus, .stTextInput input:focus {{ border-color: {OG_PRIMARY} !important; box-shadow: 0 0 0 1px {OG_PRIMARY}55 !important; }}
     .stSelectbox > div > div {{
-        background-color: #020617 !important;
-        color: #e5e7eb !important;
-        border-radius: 0.75rem !important;
-        border: 1px solid rgba(148,163,184,0.6) !important;
+        background-color: #020617 !important; color: #e5e7eb !important;
+        border-radius: 0.75rem !important; border: 1px solid rgba(148,163,184,0.6) !important;
     }}
-
-    /* Footer links */
     .social-footer {{
-        margin-top: 2rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(55,65,81,0.8);
-        text-align: center;
-        font-size: 0.9rem;
-        color: #9ca3af;
+        margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(55,65,81,0.8);
+        text-align: center; font-size: 0.9rem; color: #9ca3af;
     }}
-    .social-footer a {{
-        color: {OG_PRIMARY};
-        text-decoration: none;
-        margin: 0 0.4rem;
-        font-weight: 500;
-    }}
-    .social-footer a:hover {{
-        text-decoration: underline;
-    }}
+    .social-footer a {{ color: {OG_PRIMARY}; text-decoration: none; margin: 0 0.4rem; font-weight: 500; }}
+    .social-footer a:hover {{ text-decoration: underline; }}
+    .enter-hint {{ font-size: 0.85rem; color: #9ca3af; margin-top: 0.25rem; }}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# --- Main content ---
 st.title("OpenGradient Verifiable Chat")
 st.write(
     """
@@ -115,7 +68,6 @@ This app demonstrates how to run **verifiable LLM chat via OpenGradient**.
 
 with st.sidebar:
     st.header("Settings")
-
     model = st.selectbox(
         "Model",
         [
@@ -125,7 +77,6 @@ with st.sidebar:
         ],
         format_func=lambda m: str(m).split(".")[-1],
     )
-
     settlement_mode = st.selectbox(
         "Settlement mode (x402)",
         [
@@ -135,15 +86,10 @@ with st.sidebar:
         ],
         format_func=lambda m: str(m).split(".")[-1],
     )
-
     st.markdown("---")
-
-    # Small feedback block in the sidebar
     with st.expander("Feedback / Issues"):
         feedback_text = st.text_area(
-            "Your message",
-            key="feedback_message",
-            height=90,
+            "Your message", key="feedback_message", height=90,
             placeholder="Hit an error or have an idea? Leave it here.",
         )
         if st.button("Send", key="send_feedback"):
@@ -153,34 +99,35 @@ with st.sidebar:
                 st.warning("Please enter a message before sending.")
 
 st.subheader("Prompt")
-prompt = st.text_area(
-    "Enter your prompt",
-    height=160,
-    placeholder="Example: Explain in simple terms how OpenGradient works and why verifiable inference matters.",
-)
 
-if st.button("Run verifiable inference on OpenGradient", type="primary", key="run_inference"):
+with st.form("prompt_form", clear_on_submit=False):
+    prompt = st.text_area(
+        "Enter your prompt",
+        height=160,
+        placeholder="Example: Explain in simple terms how OpenGradient works and why verifiable inference matters.",
+        key="prompt_input",
+    )
+    st.markdown('<p class="enter-hint">Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line.</p>', unsafe_allow_html=True)
+    submitted = st.form_submit_button("Run verifiable inference on OpenGradient")
+
+if submitted:
     if not prompt.strip():
         st.warning("Please enter a prompt first.")
     else:
         try:
             client = get_client()
         except Exception as e:
-            # Конфиг сломан – это уже не “перезапусти”, пусть будет честная ошибка
             st.error(f"Failed to initialize OpenGradient client: {e}")
         else:
             with st.spinner("Running verifiable inference on the OpenGradient network..."):
                 try:
-                    # Ensure there is enough OPG allowance for x402 payments
                     client.llm.ensure_opg_approval(opg_amount=5)
-
                     completion = client.llm.chat(
                         model=model,
                         messages=[{"role": "user", "content": prompt}],
                         x402_settlement_mode=settlement_mode,
                     )
                 except Exception:
-                    # Любая сетевая/платёжная ошибка скрывается за дружелюбным сообщением
                     st.warning(
                         "It looks like something went wrong on the network side. "
                         "Please try sending your request again."
@@ -191,14 +138,12 @@ if st.button("Run verifiable inference on OpenGradient", type="primary", key="ru
                         response_text = completion.chat_output.get("content")
                     except Exception:
                         pass
-
                     st.subheader("Model response")
                     if response_text:
                         st.write(response_text)
                     else:
                         st.write("Could not read `chat_output['content']` from the response.")
                         st.json(getattr(completion, "__dict__", str(completion)))
-
                     st.subheader("On-chain verification")
                     tx_hash = getattr(completion, "transaction_hash", None)
                     if tx_hash and tx_hash != "external":
@@ -208,16 +153,40 @@ if st.button("Run verifiable inference on OpenGradient", type="primary", key="ru
                         st.write("On-chain transaction hash is managed externally for this request.")
                     else:
                         st.write("`transaction_hash` field not found in the response.")
-
                     with st.expander("Raw response data (for OpenGradient reviewer)"):
                         st.json(
-                            {
-                                "transaction_hash": tx_hash,
-                                "raw": getattr(completion, "__dict__", str(completion)),
-                            }
+                            {"transaction_hash": tx_hash, "raw": getattr(completion, "__dict__", str(completion))}
                         )
 
-# --- Footer with OpenGradient social links ---
+# Enter key → submit form (Shift+Enter = new line)
+st.markdown(
+    """
+    <script>
+    (function() {
+        function attachEnterSubmit() {
+            var main = document.querySelector('main');
+            if (!main) return;
+            var ta = main.querySelector('textarea');
+            var btn = main.querySelector('button[type="submit"]');
+            if (!ta || !btn) return;
+            if (ta.dataset.enterDone) return;
+            ta.dataset.enterDone = '1';
+            ta.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    btn.click();
+                }
+            });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attachEnterSubmit);
+        else attachEnterSubmit();
+        setTimeout(attachEnterSubmit, 500);
+    })();
+    </script>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.markdown(
     """
     <div class="social-footer">
